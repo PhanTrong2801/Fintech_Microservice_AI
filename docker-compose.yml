@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0 # Sử dụng MySQL bản 8.0 ổn định
+    container_name: fintech-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root # Mật khẩu root (khớp với application.yml)
+      MYSQL_DATABASE: fintech_identity # Tự động tạo sẵn database này khi chạy lần đầu
+    ports:
+      - "3306:3306" # Ánh xạ port 3306 của container ra port 3306 của máy bạn
+    volumes:
+      - mysql_data:/var/lib/mysql # Lưu trữ dữ liệu để không bị mất khi tắt container
+    command: --default-authentication-plugin=mysql_native_password # Đảm bảo tương thích tốt với driver cũ nếu có
+
+volumes:
+  mysql_data:
