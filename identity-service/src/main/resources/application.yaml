@@ -5,7 +5,7 @@ spring:
     name: identity-service
   datasource:
     # URL kết nối đến MySQL. Đổi 'fintech_identity' thành tên database của bạn
-    url: jdbc:mysql://localhost:3306/fintech_identity?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3307/fintech_identity?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root # Tên đăng nhập DB của bạn (mặc định XAMPP/MySQL là root)
     password: root # Mật khẩu DB của bạn (nếu không có thì để trống: password: )
     driver-class-name: com.mysql.cj.jdbc.Driver
