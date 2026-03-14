@@ -40,4 +40,28 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    /**
+     * Hàm trích xuất Email (subject) từ chuỗi Token
+     */
+    public String extractEmail(String token){
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    /**
+     * Hàm kiểm tra Token có hợp lệ và chưa hết hạn không
+     */
+    public boolean isTokenValid(String token){
+        try{
+            Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
 }
