@@ -1,0 +1,23 @@
+server:
+  port: 8080 # Gateway thường chạy ở cổng đẹp nhất 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server: # <--- THÊM DÒNG NÀY
+        webflux: # <--- THÊM DÒNG NÀY
+          routes:
+            # Định tuyến cho Identity Service
+            - id: identity-service
+              uri: http://localhost:8081
+              predicates:
+                - Path=/identity/**
+              filters:
+                - AuthenticationFilter
+                - StripPrefix=1
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
