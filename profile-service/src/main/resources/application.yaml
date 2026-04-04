@@ -1,0 +1,16 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: profile-service
+  datasource:
+    # Mẹo hay: Thêm createDatabaseIfNotExist=true để tự tạo DB mới
+    url: jdbc:mysql://localhost:3307/fintech_profile?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # Tự động cập nhật bảng trong Database
+    show-sql: true # In câu lệnh SQL ra console để dễ debug
