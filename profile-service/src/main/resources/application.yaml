@@ -6,7 +6,7 @@ spring:
     name: profile-service
   datasource:
     # Mẹo hay: Thêm createDatabaseIfNotExist=true để tự tạo DB mới
-    url: jdbc:mysql://localhost:3307/fintech_profile?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://fintech-mysql:3306/fintech_profile?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver

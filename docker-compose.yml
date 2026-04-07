@@ -22,6 +22,16 @@ services:
     depends_on:
       - mysql # Sửa thành 'mysql' để khớp với tên service ở trên
 
+  # 2. Identity Service
+  profile-service:
+    container_name: profile-service
+    build:
+      context: ./profile-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql # Sửa thành 'mysql' để khớp với tên service ở trên
+
   # 3. API Gateway
   api-gateway:
     container_name: api-gateway

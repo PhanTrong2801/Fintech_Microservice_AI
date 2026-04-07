@@ -2,7 +2,9 @@ package com.fintech.identity_service.service;
 
 import com.fintech.identity_service.dto.AuthRequest;
 import com.fintech.identity_service.dto.AuthResponse;
+import com.fintech.identity_service.dto.ProfileCreationRequest;
 import com.fintech.identity_service.entity.User;
+import com.fintech.identity_service.httpclient.ProfileClient;
 import com.fintech.identity_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +17,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final ProfileClient profileClient;
 
     //login Đăng kí
     public AuthResponse register(AuthRequest request){
@@ -30,6 +33,22 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+    //  GIAO TIẾP NỘI BỘ: Tự động tạo Profile qua OpenFeign
+        ProfileCreationRequest profileCreationRequest =new ProfileCreationRequest();
+        profileCreationRequest.setEmail(user.getEmail());
+        // Lấy tên mặc định là phần trước chữ @ của email
+        profileCreationRequest.setFullName(user.getEmail().split("@")[0]);
+
+        try {
+            profileClient.createProfile(profileCreationRequest);
+            System.out.println("Giao tiếp nội bộ: Đã tạo Profile rỗng cho " + user.getEmail());
+
+
+        }catch (Exception e){
+            System.err.println("Lỗi giao tiếp nội bộ: Chưa thể tạo profile");
+            e.printStackTrace();
+        }
+
 // 4. Sinh Token và trả về
         String token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token,"Đăng kí thành công!");
