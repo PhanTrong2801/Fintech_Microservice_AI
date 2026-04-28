@@ -1,0 +1,14 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  client:
+    # 2 dòng dưới đây CỰC KỲ QUAN TRỌNG:
+    # Mặc định, mọi ứng dụng Eureka đều tự động tìm một Server khác để ghi danh.
+    # Nhưng vì chính bản thân nó ĐANG LÀ SERVER, nó không cần phải tự ghi danh chính mình.
+    # Nên ta phải "tắt" 2 tính năng này đi để nó không báo lỗi tìm kiếm.
+    register-with-eureka: false
+    fetch-register: false
