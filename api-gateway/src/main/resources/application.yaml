@@ -11,7 +11,7 @@ spring:
           routes:
             # Định tuyến cho Identity Service
             - id: identity-service
-              uri: http://identity-service:8081
+              uri: lb://identity-service
               predicates:
                 - Path=/identity/**
               filters:
@@ -19,7 +19,7 @@ spring:
                 - StripPrefix=1
             # 2. Tuyến đường MỚI cho Profile Service
             - id: profile-service
-              uri: http://profile-service:8082
+              uri: lb://profile-service
               predicates:
                 - Path=/profile/**
               filters:
@@ -27,5 +27,5 @@ spring:
                 - StripPrefix=1
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

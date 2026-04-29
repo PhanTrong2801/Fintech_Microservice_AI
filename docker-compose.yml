@@ -1,4 +1,10 @@
 services:
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+    ports:
+      - "8761:8761"
   # 1. Database
   mysql: # Tên service
     image: mysql:8.0
@@ -21,6 +27,10 @@ services:
       - "8081:8081"
     depends_on:
       - mysql # Sửa thành 'mysql' để khớp với tên service ở trên
+      - eureka-server # Đợi cả DB và Tổng đài
+    environment:
+      # Chỉ cho service biết Eureka đang nằm ở đâu trong mạng Docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
   # 2. Identity Service
   profile-service:
@@ -31,6 +41,9 @@ services:
       - "8082:8082"
     depends_on:
       - mysql # Sửa thành 'mysql' để khớp với tên service ở trên
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
   # 3. API Gateway
   api-gateway:
@@ -41,6 +54,10 @@ services:
       - "8080:8080"
     depends_on:
       - identity-service # Đợi Identity Service chạy lên trước
+      - profile-service
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
 volumes:
   mysql_data:

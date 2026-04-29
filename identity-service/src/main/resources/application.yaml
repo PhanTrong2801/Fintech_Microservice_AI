@@ -26,8 +26,7 @@ jwt:
   # Thời gian sống của Token tính bằng mili-giây (3600000ms = 1 giờ)
   expiration: 3600000
 
-# Cấu hình Eureka Client (Tạm thời tắt đi để tránh báo lỗi đỏ liên tục trên console vì ta chưa dựng Eureka Server)
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

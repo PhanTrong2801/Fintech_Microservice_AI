@@ -14,3 +14,8 @@ spring:
     hibernate:
       ddl-auto: update # Tự động cập nhật bảng trong Database
     show-sql: true # In câu lệnh SQL ra console để dễ debug
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
