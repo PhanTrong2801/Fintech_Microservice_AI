@@ -45,6 +45,18 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
+
+  wallet-service:
+    container_name: wallet-service
+    build: ./wallet-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - mysql
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
   # 3. API Gateway
   api-gateway:
     container_name: api-gateway

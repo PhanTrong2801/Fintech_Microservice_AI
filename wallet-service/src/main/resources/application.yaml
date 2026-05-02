@@ -1,0 +1,20 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: wallet-service
+  datasource:
+    url: jdbc:mysql://fintech-mysql:3306/fintech_wallet?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

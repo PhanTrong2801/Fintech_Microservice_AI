@@ -25,6 +25,14 @@ spring:
               filters:
                 - AuthenticationFilter # Bắt buộc phải có Vé (Token) mới được vào!
                 - StripPrefix=1
+
+            - id: wallet-service
+              uri: lb://wallet-service
+              predicates:
+                - Path=/wallet/**
+              filters:
+                - AuthenticationFilter
+                - StripPrefix=1
 eureka:
   client:
     service-url:
