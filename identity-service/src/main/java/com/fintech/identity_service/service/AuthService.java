@@ -5,6 +5,7 @@ import com.fintech.identity_service.dto.AuthResponse;
 import com.fintech.identity_service.dto.ProfileCreationRequest;
 import com.fintech.identity_service.entity.User;
 import com.fintech.identity_service.httpclient.ProfileClient;
+import com.fintech.identity_service.httpclient.WalletClient;
 import com.fintech.identity_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final ProfileClient profileClient;
+    private final WalletClient walletClient;
 
     //login Đăng kí
     public AuthResponse register(AuthRequest request){
@@ -43,9 +45,12 @@ public class AuthService {
             profileClient.createProfile(profileCreationRequest);
             System.out.println("Giao tiếp nội bộ: Đã tạo Profile rỗng cho " + user.getEmail());
 
+            // Tự động tạo Wallet qua OpenFeign
+            walletClient.createWallet(user.getEmail());
+            System.out.println("Giao tiếp nội bộ: Đã tạo Wallet rỗng cho " + user.getEmail());
 
         }catch (Exception e){
-            System.err.println("Lỗi giao tiếp nội bộ: Chưa thể tạo profile");
+            System.err.println("Lỗi giao tiếp nội bộ: Chưa thể tạo profile hoặc wallet");
             e.printStackTrace();
         }
 

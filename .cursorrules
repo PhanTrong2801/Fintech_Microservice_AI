@@ -1,0 +1,63 @@
+🎯 FINTECH MICROSERVICES AI SKILLS & CONTEXT
+📂 1. PROJECT ARCHITECTURE
+Bạn (AI) đang làm việc trên hệ thống FinTech Microservices. Cấu trúc thư mục như sau:
+
+/api-gateway: Cửa ngõ (Port 8080), xử lý JWT Filter và Routing.
+
+/eureka-server: Tổng đài danh bạ (Port 8761), quản lý Service Discovery.
+
+/identity-service: Quản lý Auth, User, và điều phối (Orchestrator).
+
+/profile-service: Quản lý thông tin người dùng.
+
+/wallet-service: Quản lý số dư và giao dịch tiền tệ.
+
+⚙️ 2. TECH STACK SPECIFICATIONS
+Language: Java 21.
+
+Framework: Spring Boot 3.4.x, Spring Cloud 2024.0.0.
+
+Communication: Internal calls via OpenFeign.
+
+Data Persistence: Spring Data JPA, MySQL 8.0.
+
+Tools: Docker, Docker Compose, Lombok.
+
+🚀 3. CORE LOGIC FLOWS
+Registration Flow (Chuỗi phản ứng tự động):
+identity-service tiếp nhận đăng ký -> Lưu DB Identity.
+
+identity-service gọi profile-service (Feign) -> Tạo User Profile.
+
+identity-service gọi wallet-service (Feign) -> Tạo Ví (Balance = 0).
+
+API Routing Rule:
+URL bên ngoài: http://localhost:8080/{service-prefix}/{path}
+
+Gateway sử dụng StripPrefix=1. Khi hướng dẫn code Controller, hãy bỏ qua prefix này.
+
+🛠 4. CODING STANDARDS (AI MUST COMPLY)
+💰 Financial Data:
+BẮT BUỘC dùng java.math.BigDecimal cho mọi trường liên quan đến tiền. Không dùng float/double.
+
+Luôn khởi tạo balance bằng BigDecimal.ZERO.
+
+🔗 Inter-service Communication:
+FeignClient phải định danh bằng Service Name trong Eureka (ví dụ: @FeignClient(name = "wallet-service")).
+
+Luôn bọc các cuộc gọi Feign trong khối try-catch để đảm bảo tính sẵn sàng (Resilience).
+
+🛡 Security Context:
+Các route /auth/ phải được .permitAll().
+
+Luôn sử dụng JwtAuthFilter để trích xuất email/roles từ Token cho các service cần bảo mật.
+
+📦 DevOps:
+Mỗi khi thay đổi code ảnh hưởng đến file .jar, hãy nhắc người dùng chạy lệnh: mvn clean package -DskipTests và docker compose up -d --build {service-name}.
+
+🧠 5. INSTRUCTIONS FOR AI
+Trước khi viết code, hãy kiểm tra xem Service đó đã có trong docker-compose.yml và đã đăng ký Eureka chưa.
+
+Luôn ưu tiên viết code theo mô hình 3 lớp: Controller -> Service -> Repository.
+
+Khi viết DTO, hãy sử dụng Lombok @Data, @Builder, @NoArgsConstructor, @AllArgsConstructor.

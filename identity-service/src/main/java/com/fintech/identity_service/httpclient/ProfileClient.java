@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 //Service client để giao tiếp với profile-service
-@FeignClient(name = "profile-service", url = "http://profile-service:8082")
+@FeignClient(name = "profile-service")
 public interface ProfileClient {
 
     // Mô phỏng lại chính xác API tạo profile bên Profile Service
