@@ -1,0 +1,23 @@
+package com.repurpose.api_gateway.filter;
+
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.function.Predicate;
+
+@Component
+public class RouteValidator {
+
+    public static final List<String> openApiEndpoints = List.of(
+            "/identity/auth/register",
+            "/identity/auth/login",
+            "/pipeline/formats",       // Public: xem danh sách format
+            "/pipeline/health"         // Public: health check
+    );
+
+    public Predicate<ServerHttpRequest> isSecured =
+            request -> openApiEndpoints
+                    .stream()
+                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+}

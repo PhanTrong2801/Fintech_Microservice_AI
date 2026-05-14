@@ -5,15 +5,14 @@ spring:
   application:
     name: profile-service
   datasource:
-    # Mẹo hay: Thêm createDatabaseIfNotExist=true để tự tạo DB mới
-    url: jdbc:mysql://fintech-mysql:3306/fintech_profile?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://repurpose-mysql:3306/repurpose_profile?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update # Tự động cập nhật bảng trong Database
-    show-sql: true # In câu lệnh SQL ra console để dễ debug
+      ddl-auto: update
+    show-sql: true
 
 eureka:
   client:

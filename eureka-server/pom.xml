@@ -8,11 +8,11 @@
 		<version>4.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.fintech</groupId>
+	<groupId>com.repurpose</groupId>
 	<artifactId>eureka-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>eureka-server</name>
+	<description>Service Discovery for AI Content Repurposing Pipeline</description>
 	<url/>
 	<licenses>
 		<license/>

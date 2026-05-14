@@ -8,11 +8,11 @@
 		<version>4.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.fintech</groupId>
+	<groupId>com.repurpose</groupId>
 	<artifactId>identity-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>identity-service</name>
-	<description>Identity Service for Spring Boot</description>
+	<description>Identity &amp; Auth Service for AI Content Repurposing Pipeline</description>
 	<url/>
 	<licenses>
 		<license/>

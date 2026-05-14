@@ -1,29 +1,26 @@
 server:
-  port: 8081 # Identity Service sẽ chạy ở cổng 8081 (Gateway sau này sẽ chạy 8080)
+  port: 8081
 spring:
   application:
     name: identity-service
   datasource:
-    # URL kết nối đến MySQL. Đổi 'fintech_identity' thành tên database của bạn
-    url: jdbc:mysql://fintech-mysql:3306/fintech_identity?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: root # Tên đăng nhập DB của bạn (mặc định XAMPP/MySQL là root)
-    password: root # Mật khẩu DB của bạn (nếu không có thì để trống: password: )
+    url: jdbc:mysql://repurpose-mysql:3306/repurpose_identity?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update # Tự động tạo/cập nhật bảng trong Database dựa trên code Java
-    show-sql: true # Hiển thị câu lệnh SQL trên console để dễ debug
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        format_sql: true # Format câu SQL cho dễ đọc
-        dialect: org.hibernate.dialect.MySQLDialect # Khai báo rõ dùng phương ngữ MySQL
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
-# Cấu hình tùy chỉnh cho JWT (JSON Web Token)
+# Cấu hình JWT
 jwt:
-  # Chuỗi bí mật dùng để ký token (Phải dài ít nhất 32 ký tự / 256-bit)
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  # Thời gian sống của Token tính bằng mili-giây (3600000ms = 1 giờ)
   expiration: 3600000
 
 eureka:

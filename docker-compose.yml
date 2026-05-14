@@ -5,20 +5,21 @@ services:
       context: ./eureka-server
     ports:
       - "8761:8761"
+
   # 1. Database
-  mysql: # Tên service
+  mysql:
     image: mysql:8.0
-    container_name: fintech-mysql
+    container_name: repurpose-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fintech_identity
+      MYSQL_DATABASE: repurpose_identity
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
 
-  # 2. Identity Service
+  # 2. Identity Service (Auth, JWT, Subscription)
   identity-service:
     container_name: identity-service
     build:
@@ -26,13 +27,12 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - mysql # Sửa thành 'mysql' để khớp với tên service ở trên
-      - eureka-server # Đợi cả DB và Tổng đài
+      - mysql
+      - eureka-server
     environment:
-      # Chỉ cho service biết Eureka đang nằm ở đâu trong mạng Docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
-  # 2. Identity Service
+  # 3. Profile Service (User Profiles for Content Creators)
   profile-service:
     container_name: profile-service
     build:
@@ -40,15 +40,15 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - mysql # Sửa thành 'mysql' để khớp với tên service ở trên
+      - mysql
       - eureka-server
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
-
-  wallet-service:
-    container_name: wallet-service
-    build: ./wallet-service
+  # 4. Content Service (Content Projects & Repurposed Outputs)
+  content-service:
+    container_name: content-service
+    build: ./content-service
     ports:
       - "8083:8083"
     depends_on:
@@ -57,7 +57,22 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
-  # 3. API Gateway
+  # 5. AI Pipeline Service (AI Content Generation)
+  ai-pipeline-service:
+    container_name: ai-pipeline-service
+    build: ./ai-pipeline-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker
+      - GEMINI_API_KEY=your-gemini-key-here
+      - OPENAI_API_KEY=your-openai-key-here
+      - AI_PROVIDER=gemini
+
+  # 6. API Gateway
   api-gateway:
     container_name: api-gateway
     build:
@@ -65,11 +80,27 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - identity-service # Đợi Identity Service chạy lên trước
+      - identity-service
       - profile-service
+      - content-service
+      - ai-pipeline-service
       - eureka-server
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  # 7. Frontend Web App (React + Vite)
+  frontend:
+    container_name: frontend-webapp
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api-gateway
 
 volumes:
   mysql_data:
