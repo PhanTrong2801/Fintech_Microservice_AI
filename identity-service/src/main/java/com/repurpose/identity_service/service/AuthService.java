@@ -102,4 +102,22 @@ public class AuthService {
         user.setQuotaResetDate(LocalDate.now().plusMonths(1));
         return userRepository.save(user);
     }
+
+    // Tiêu thụ quota
+    public boolean consumeQuota(String email) {
+        User user = getUserByEmail(email);
+        
+        // Kiểm tra và reset quota nếu đã qua ngày reset
+        if (user.getQuotaResetDate() != null && user.getQuotaResetDate().isBefore(LocalDate.now())) {
+            user.setUsedQuota(0);
+            user.setQuotaResetDate(LocalDate.now().plusMonths(1));
+        }
+        
+        if (user.getUsedQuota() < user.getMonthlyQuota()) {
+            user.setUsedQuota(user.getUsedQuota() + 1);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 }

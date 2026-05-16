@@ -19,6 +19,7 @@ public class ContentService {
     private final ContentProjectRepository projectRepository;
     private final RepurposedOutputRepository outputRepository;
     private final AiPipelineClient aiPipelineClient;
+    private final com.repurpose.content_service.httpclient.IdentityClient identityClient;
 
     /**
      * Tạo project mới (tương đương createWallet trong Fintech)
@@ -67,8 +68,14 @@ public class ContentService {
      * Trigger AI repurpose - logic chính (tương đương transfer trong Fintech)
      */
     @Transactional
-    public List<RepurposedOutput> repurposeContent(Long projectId, List<OutputFormat> formats) {
+    public List<RepurposedOutput> repurposeContent(Long projectId, List<OutputFormat> formats, String token) {
         ContentProject project = getProjectById(projectId);
+
+        // Kiểm tra và trừ quota trước khi làm
+        org.springframework.http.ResponseEntity<Boolean> quotaResponse = identityClient.consumeQuota(project.getEmail(), token);
+        if (quotaResponse.getBody() == null || !quotaResponse.getBody()) {
+            throw new RuntimeException("Bạn đã hết quota sử dụng trong tháng này! Vui lòng nâng cấp tài khoản.");
+        }
 
         // Cập nhật trạng thái project
         project.setStatus(ProjectStatus.PROCESSING);
@@ -167,8 +174,10 @@ public class ContentService {
             if (content == null || content.isBlank()) {
                 content = "A professional social media visual";
             }
-            String shortPrompt = content.length() > 500 ? content.substring(0, 500) : content;
-            System.out.println("🔍 [DEBUG] Prompt prepared: " + (shortPrompt.length() > 20 ? shortPrompt.substring(0, 20) + "..." : shortPrompt));
+            String shortPrompt = content.length() > 50 ? content.substring(0, 50) : content;
+            // Loại bỏ các ký tự đặc biệt ở cuối để tránh lỗi URL
+            shortPrompt = shortPrompt.replaceAll("[^a-zA-Z0-9\\sàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]", " ").trim();
+            System.out.println("🔍 [DEBUG] Prompt prepared: " + shortPrompt);
 
             // Gọi AI Pipeline Service để sinh ảnh
             java.util.Map<String, String> request = new java.util.HashMap<>();
@@ -195,5 +204,16 @@ public class ContentService {
         
         System.out.println("🔍 [DEBUG] Returning original output (fallback)");
         return output;
+    }
+
+    /**
+     * Cập nhật nội dung của một output (khi người dùng sửa inline)
+     */
+    @Transactional
+    public RepurposedOutput updateOutputContent(Long outputId, String newContent) {
+        RepurposedOutput output = outputRepository.findById(outputId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy output với ID: " + outputId));
+        output.setGeneratedContent(newContent);
+        return outputRepository.save(output);
     }
 }

@@ -45,7 +45,7 @@ public class RepurposedOutput {
 
     private Integer tokensUsed;
 
-    @Column(length = 512)
+    @Column(length = 2048)
     private String imageUrl;
 
     @CreationTimestamp

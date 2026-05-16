@@ -40,4 +40,11 @@ public class UserController {
             @RequestParam SubscriptionPlan plan) {
         return ResponseEntity.ok(authService.upgradePlan(email, plan));
     }
+    /**
+     * Tiêu thụ 1 lượt quota
+     */
+    @PostMapping("/me/consume-quota")
+    public ResponseEntity<Boolean> consumeQuota(@RequestParam String email) {
+        return ResponseEntity.ok(authService.consumeQuota(email));
+    }
 }

@@ -8,6 +8,7 @@ import com.repurpose.content_service.service.ContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.repurpose.content_service.service.UrlIngestionService;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class ContentController {
 
     private final ContentService contentService;
+    private final UrlIngestionService urlIngestionService;
 
     /**
      * Tạo workspace rỗng khi user đăng ký (gọi nội bộ từ Identity Service)
@@ -34,6 +36,24 @@ public class ContentController {
     public ResponseEntity<ContentProject> createProject(
             @RequestParam String email,
             @RequestBody CreateProjectRequest request) {
+        return ResponseEntity.ok(contentService.createProject(email, request));
+    }
+
+    /**
+     * Tạo project từ URL (YouTube hoặc Website)
+     */
+    @PostMapping("/projects/ingest")
+    public ResponseEntity<ContentProject> ingestProject(
+            @RequestParam String email,
+            @RequestParam String url) {
+        String content = urlIngestionService.extractContent(url);
+        
+        CreateProjectRequest request = CreateProjectRequest.builder()
+                .title("Project from URL")
+                .originalContent(content)
+                .contentType(com.repurpose.content_service.entity.ContentType.OTHER)
+                .build();
+                
         return ResponseEntity.ok(contentService.createProject(email, request));
     }
 
@@ -60,12 +80,13 @@ public class ContentController {
     @PostMapping("/projects/{id}/repurpose")
     public ResponseEntity<List<RepurposedOutput>> repurpose(
             @PathVariable Long id,
-            @RequestBody Map<String, List<OutputFormat>> body) {
+            @RequestBody Map<String, List<OutputFormat>> body,
+            @RequestHeader("Authorization") String token) {
         List<OutputFormat> formats = body.get("formats");
         if (formats == null || formats.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(contentService.repurposeContent(id, formats));
+        return ResponseEntity.ok(contentService.repurposeContent(id, formats, token));
     }
 
     /**
@@ -99,5 +120,19 @@ public class ContentController {
     @PostMapping("/outputs/{outputId}/generate-image")
     public ResponseEntity<RepurposedOutput> generateImage(@PathVariable Long outputId) {
         return ResponseEntity.ok(contentService.generateImageForOutput(outputId));
+    }
+
+    /**
+     * Cập nhật nội dung của một output
+     */
+    @PutMapping("/outputs/{outputId}")
+    public ResponseEntity<RepurposedOutput> updateOutputContent(
+            @PathVariable Long outputId,
+            @RequestBody Map<String, String> body) {
+        String newContent = body.get("content");
+        if (newContent == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(contentService.updateOutputContent(outputId, newContent));
     }
 }
